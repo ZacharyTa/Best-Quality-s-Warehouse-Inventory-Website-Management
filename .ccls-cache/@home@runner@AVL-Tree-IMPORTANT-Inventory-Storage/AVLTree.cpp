@@ -18,11 +18,11 @@ class AVL{
             this->inStock = inStock;
             this->ID = ID;
             this->SKU = SKU;
-            left = NULL;
-            right = NULL;
+            left = nullptr;
+            right = nullptr;
           }
         };
-        node * root = NULL;
+        node * root = nullptr;
         int n;
         void insert(string prodID, int price, bool inStock, int ID = 0, string SKU = ""){
             root=insertUtil(root, prodID, price, inStock, ID, SKU);
@@ -39,7 +39,7 @@ class AVL{
         }
     private:
         int height(node * head){
-            if(head==NULL) return 0;
+            if(head==nullptr) return 0;
             return head->height;
         }
         node * rightRotation(node * head){
@@ -61,14 +61,14 @@ class AVL{
         }
 
         void inorderUtil(node * head){
-            if(head==NULL) return ;
+            if(head==nullptr) return ;
             inorderUtil(head->left);
             cout<<head->prodID<<" "<<head->price<<" "<<head->inStock<<endl;
             inorderUtil(head->right);
         }
 
         node * insertUtil(node * head, string prodID, int price, bool inStock, int ID, string SKU){
-            if(head==NULL){
+            if(head==nullptr){
                 n+=1;
                 node * temp = new node(prodID, price, inStock, ID, SKU);
                 return temp;
@@ -95,27 +95,27 @@ class AVL{
             return head;
         }
         node * removeUtil(node * head, string prodID){
-            if(head==NULL) return NULL;
+            if(head==nullptr) return nullptr;
             if(prodID < head->prodID){
                 head->left = removeUtil(head->left, prodID);
             }else if(prodID > head->prodID){
                 head->right = removeUtil(head->right, prodID);
             }else{
                 node * r = head->right;
-                if(head->right==NULL){
+                if(head->right==nullptr){
                     node * l = head->left;
                     delete(head);
                     head = l;
-                }else if(head->left==NULL){
+                }else if(head->left==nullptr){
                     delete(head);
                     head = r;
                 }else{
-                    while(r->left!=NULL) r = r->left;
+                    while(r->left!=nullptr) r = r->left;
                     head->prodID = r->prodID;
                     head->right = removeUtil(head->right, r->prodID);
                 }
             }
-            if(head==NULL) return head;
+            if(head==nullptr) return head;
             head->height = 1 + max(height(head->left), height(head->right));
             int bal = height(head->left) - height(head->right);
             if(bal>1){
@@ -136,10 +136,11 @@ class AVL{
             return head;
         }
         node * searchUtil(node * head, string prodID){
-            if(head == NULL) return NULL;
-            string prodIDSearch = head->prodID; //Unneccessary Code?
-            if(prodIDSearch == prodID) return head;
-            if(prodIDSearch > prodID) return searchUtil(head->left, prodID);
-            if(prodIDSearch < prodID) return searchUtil(head->right, prodID);
+          if(head == nullptr) return nullptr;
+          string prodIDSearch = head->prodID; //Unneccessary Code?
+          if(prodIDSearch == prodID) return head;
+          if(prodIDSearch > prodID) return searchUtil(head->left, prodID);
+          if(prodIDSearch < prodID) return searchUtil(head->right, prodID);
+          else {cout << "EROR" << endl; return nullptr;}
         }
 };

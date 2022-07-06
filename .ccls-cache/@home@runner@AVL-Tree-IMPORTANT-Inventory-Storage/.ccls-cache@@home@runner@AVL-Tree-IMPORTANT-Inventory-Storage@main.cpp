@@ -10,18 +10,15 @@ using namespace std;
 
 
 //-----------------------------------------------------
-void PopulateInvAVL(AVL *tree, string fileName, string prodStatus, vector<string> *prodList);
+void PopulateInvAVL(AVL *tree, string fileName, string prodStatus, vector<string> *prodListErrors);
 bool isValidProd(vector<string> prodID);
 int findPrice(vector<string> prodID);
 bool findinStock(vector<string> prodID, string prodStatus, int price);
-void createDeleteCSV(ofstream &outF, AVL::node *prodInv, AVL *webTree);
-void createDeleteCSV(ofstream &outF, vector<string> *prodListDupes);
+void createDeleteCSV(ofstream &outF, AVL::node *prod);
 //-----------------------------------------------------
 int main(){
-  //Initialize Vectors of Accuterm Naming Errors
+  //Initialize Vectors of Accuterm Naming Errors (or Others for Debugging Reasons)
   vector<string> *prodListErrors = new vector<string>;
-  //Initialize Vectors of Duplicates on the Website
-  vector<string> *prodListDupes = new vector<string>;
   
   //Populate Discontinued/Closeout Items Tree
   AVL *disContTree = new AVL;
@@ -35,13 +32,12 @@ int main(){
 
   //Populate Website's Items Tree
   AVL *webTree = new AVL;
-  PopulateInvAVL(webTree, "Website Inventory.csv", "Continue", prodListDupes);
+  PopulateInvAVL(contTree, "Website Inventory.csv", "Continue", prodListErrors);
 
   //Write To "Items to Delete off Website.csv"
   ofstream outF;
   outF.open("Items to Delete off Website.csv");
-  createDeleteCSV(outF, disContTree->root, webTree);
-  createDeleteCSV(outF, prodListDupes);
+  createDeleteCSV(outF, disContTree->root);
   outF.close();
 
   //Write To "Accuterm Items with Error Naming Conventions"
@@ -55,21 +51,13 @@ int main(){
 }
 //-----------------------------------------------------
 
-void createDeleteCSV(ofstream &outF, AVL::node *prodInv, AVL* webTree) {
-  if(prodInv==nullptr) return;
-  createDeleteCSV(outF, prodInv->left, webTree);
-  //If Website contains discontinuing items that is already out of stock
-  if (!prodInv->inStock && webTree->search(prodInv->prodID) != nullptr){
-    outF << prodInv->prodID << endl;
-  }
-  createDeleteCSV(outF, prodInv->right, webTree);
-}
-void createDeleteCSV(ofstream &outF, vector<string> *prodListDupes) {
-  //Duplicated Items on website with identical names
-  outF << "Number of Duplicated Items: " << prodListDupes->size() << endl;
-  for (unsigned i = 0; i < prodListDupes->size(); ++i) {
-    outF << prodListDupes->at(i) << endl;
-  }
+void createDeleteCSV(ofstream &outF, AVL::node *prod) {
+  if(prod==NULL) return;
+    createDeleteCSV(outF, prod->left);
+    if (!prod->inStock) {
+      outF << prod->prodID << endl;
+    }
+    createDeleteCSV(outF, prod->right);
 }
 
 bool isValidProd(vector<string> prodRow){
@@ -98,7 +86,7 @@ bool findinStock(vector<string> prodID, string prodStatus, int price) {
   else {cout << "Invalid Product Status Name" << endl; exit(-1);}
 }
 
-void PopulateInvAVL(AVL *tree, string ACFileName, string prodStatus, vector<string> *prodList)
+void PopulateInvAVL(AVL *tree, string ACFileName, string prodStatus, vector<string> *prodListErrors)
 {
   // File pointer
   fstream fin;
@@ -172,7 +160,7 @@ void PopulateInvAVL(AVL *tree, string ACFileName, string prodStatus, vector<stri
         }
         catch(invalid_argument const& ex) {
           cout << ex.what() << endl;
-          prodList->push_back(row.at(0));
+          prodListErrors->push_back(row.at(0));
         }
       }
     }
@@ -182,9 +170,7 @@ void PopulateInvAVL(AVL *tree, string ACFileName, string prodStatus, vector<stri
     string prodID = row.at(3);
     bool inStock = (stoi(row.at(4)) > 0);
     int price = stoi(row.at(5));
-      
-    if (tree->search(prodID) != nullptr) prodList->push_back(prodID);
-    else tree->insert(prodID, price, inStock, ID, SKU);
+    tree->insert(prodID, price, inStock, ID, SKU);
     }
   }
   fin.close();
