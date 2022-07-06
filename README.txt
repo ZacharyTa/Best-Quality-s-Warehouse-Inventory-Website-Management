@@ -24,5 +24,14 @@ Website.csv", if match isn't found.
 > Generate List of Products in Accuterm that encountered runtime error
 - If a program throws an invalid_argument error, it will generate a CSV file "Accuterm Items with Error Naming Conventions.csv"
 (Usually due to commas in discriptions, which causes the code to read into incorrect columns)
+===============================
 
-> Inputs: Accuterm's Exported Data as CSV files(Running.csv + Slow Seller.csv + Discontinued.csv + Close Out.csv)
+=====Inputs + Outputs==========
+> Inputs: 
+- Accuterm's Exported Data as CSV files -> "Running.csv" + "Slow Seller.csv" + "Discontinued.csv" + "Close Out.csv"
+- Website's Exported Inventory as CSV File (w/ WordPress's plugin, WooCommerce) -> "Website Inventory.csv"
+(NOTE: These CSV files must be named exactly as shown)
+
+> Outputs: 
+- CSV files-> "Items To Delete off Website.csv" + "Items To Add onto Website.csv" + "Accuterm Items with Error Naming Conventions.csv" + "Updated Website Inventory.csv"
+===============================
