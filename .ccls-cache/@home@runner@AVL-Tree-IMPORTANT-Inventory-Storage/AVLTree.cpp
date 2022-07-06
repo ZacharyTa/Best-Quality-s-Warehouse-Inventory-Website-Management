@@ -4,27 +4,28 @@ using namespace std;
 
 class AVL{
     public:
-        class node{
-            public:
-                string prodID;
-                int price;
-                bool inStock;
-                int height;
-                node * left;
-                node * right;
-                node(string prodID, int price, bool inStock){
-                    height = 1;
-                    this->prodID = prodID;
-                    this->price = price;
-                    this->inStock = inStock;
-                    left = NULL;
-                    right = NULL;
-                }
+      class node{
+        public:
+          string prodID, SKU;
+          int price, height, ID;
+          bool inStock;
+          node * left;
+          node * right;
+          node(string prodID, int price, bool inStock, int ID, string SKU){
+            height = 1;
+            this->prodID = prodID;
+            this->price = price;
+            this->inStock = inStock;
+            this->ID = ID;
+            this->SKU = SKU;
+            left = NULL;
+            right = NULL;
+          }
         };
         node * root = NULL;
         int n;
-        void insert(string prodID, int price, bool inStock){
-            root=insertUtil(root, prodID, price, inStock);
+        void insert(string prodID, int price, bool inStock, int ID = 0, string SKU = ""){
+            root=insertUtil(root, prodID, price, inStock, ID, SKU);
         }
         void remove(string prodID){
             root=removeUtil(root, prodID);
@@ -66,14 +67,14 @@ class AVL{
             inorderUtil(head->right);
         }
 
-        node * insertUtil(node * head, string prodID, int price, bool inStock){
+        node * insertUtil(node * head, string prodID, int price, bool inStock, int ID, string SKU){
             if(head==NULL){
                 n+=1;
-                node * temp = new node(prodID, price, inStock);
+                node * temp = new node(prodID, price, inStock, ID, SKU);
                 return temp;
             }
-            if(prodID < head->prodID) head->left = insertUtil(head->left, prodID, price, inStock);
-            else if(prodID > head->prodID) head->right = insertUtil(head->right, prodID, price, inStock);
+            if(prodID < head->prodID) head->left = insertUtil(head->left, prodID, price, inStock, ID, SKU);
+            else if(prodID > head->prodID) head->right = insertUtil(head->right, prodID, price, inStock, ID, SKU);
             head->height = 1 + max(height(head->left), height(head->right));
             int bal = height(head->left) - height(head->right);
             if(bal>1){
@@ -142,13 +143,3 @@ class AVL{
             if(prodIDSearch < prodID) return searchUtil(head->right, prodID);
         }
 };
-
-// int main() {
-//   AVL tree;
-//   tree.insert("AC12", 14, true);
-//   tree.insert("AC13", max(15, 2), true);
-//   tree.insert("AC14", max(4, 16), false);
-//   tree.inorder();
-  
-//   return 0;
-// }
